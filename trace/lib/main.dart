@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:pretty_qr_code/pretty_qr_code.dart';
 
 String name, email, mobile, pincode, password;
 int acctype;  // 1--> customer  2--> merchant
@@ -102,6 +103,10 @@ class _SignUpState extends State<SignUp> {
       Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantDash()));
   }
 
+  void clickQR() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQR()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return
@@ -142,7 +147,7 @@ class _SignUpState extends State<SignUp> {
                             Text("\t\t\tMerchant", textScaleFactor: 1.5),
                             Radio(value: 2, groupValue: acctype, onChanged: (val){setacctype(val);}),
                             (acctype==2)? Text("Generate \nQR Code:"): Text(" "),
-                            (acctype==2)? IconButton(icon: Icon(Icons.qr_code, size: 30), onPressed: () => {}): Text(" ")
+                            (acctype==2)? IconButton(icon: Icon(Icons.qr_code, size: 30), onPressed: this.clickQR): Text(" ")
                           ]
                       )
                     ]
@@ -170,6 +175,26 @@ class _SignUpState extends State<SignUp> {
 }
 
 
+class CreateQR extends StatefulWidget {
+  @override
+  _CreateQRState createState() => _CreateQRState();
+}
+
+class _CreateQRState extends State<CreateQR> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        body: Center(
+            child: PrettyQr(
+                image: AssetImage("assets/images/cyril.png"),
+                typeNumber: 3,
+                size: 300,
+                data: 'https://www.linkedin.com',
+                errorCorrectLevel: QrErrorCorrectLevel.M,
+                roundEdges: true)));
+  }
+}
+
 
 class CustomerDash extends StatefulWidget {
   const CustomerDash({Key key}) : super(key: key);
@@ -181,7 +206,7 @@ class CustomerDash extends StatefulWidget {
 class _CustomerDashState extends State<CustomerDash> {
 
   void clickQR() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => QRViewExample()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ScanQR()));
   }
 
   @override
@@ -206,12 +231,12 @@ class _CustomerDashState extends State<CustomerDash> {
 }
 
 
-class QRViewExample extends StatefulWidget {
+class ScanQR extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _QRViewExampleState();
+  State<StatefulWidget> createState() => _ScanQRState();
 }
 
-class _QRViewExampleState extends State<QRViewExample> {
+class _ScanQRState extends State<ScanQR> {
   Barcode result;
   QRViewController controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
