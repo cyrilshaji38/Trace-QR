@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Trace',
       theme: ThemeData(
-        primarySwatch: Colors.green,
+        primarySwatch: Colors.teal,
       ),
       home: Signin(),
     );
@@ -94,6 +94,14 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
+  void createacc(){
+    //first of all save all that input data into variables and then into the firebase database
+    if(acctype==1)
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash()));
+    else if(acctype==2)
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantDash()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return
@@ -141,6 +149,20 @@ class _SignUpState extends State<SignUp> {
                 ),
                 TextField(decoration: InputDecoration(labelText: "Create Password")),
                 TextField(decoration: InputDecoration(labelText: "Confirm Password")),
+                TextButton(
+                    onPressed: this.createacc,
+                    child: Text("SignUp"),
+                    style: TextButton.styleFrom(
+                        primary: Colors.white,
+                        backgroundColor: Colors.teal,
+                        textStyle: TextStyle(
+                            color: Colors.black,
+                            fontSize: 30,
+                            // fontStyle: FontStyle.
+                          )
+                    )
+                ),
+                Text("\n\n\n")
               ]
           )
       );
@@ -173,9 +195,9 @@ class _CustomerDashState extends State<CustomerDash> {
                 Column(
                     children: <Widget>[
                       // Text(name, textScaleFactor: 2),
-                      Text("email: " + email + "\nMobile No:"/* + mobile*/ + "\nPin Code:"/* + pincode*/ + "\nVaccine Status:"),
-                      Text("\nScan QR Code: "),
-                      IconButton(icon: Icon(Icons.camera_alt_outlined/*,size: 40*/), onPressed: this.clickQR,)
+                      Text("email: " + email + "\nMobile No:"/* + mobile*/ + "\nPin Code:"/* + pincode*/ + "\nVaccine Status:", textScaleFactor: 1.5),
+                      Text("\nScan QR Code: ", textScaleFactor: 1.5),
+                      IconButton(icon: Icon(Icons.camera_alt_outlined ,size: 40), onPressed: this.clickQR,)
                     ]
                 )
         )
@@ -330,5 +352,23 @@ class _QRViewExampleState extends State<QRViewExample> {
   void dispose() {
     controller?.dispose();
     super.dispose();
+  }
+}
+
+class MerchantDash extends StatefulWidget {
+  const MerchantDash({Key key}) : super(key: key);
+
+  @override
+  _MerchantDashState createState() => _MerchantDashState();
+}
+
+class _MerchantDashState extends State<MerchantDash> {
+  @override
+  Widget build(BuildContext context) {
+    return
+      Scaffold(
+        appBar: AppBar(title: Text("Trace")),
+        body: Text("LULU MALL", textScaleFactor: 2),
+      );
   }
 }
