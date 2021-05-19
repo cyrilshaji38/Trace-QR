@@ -50,24 +50,24 @@ class _SigninState extends State<Signin> {
   Widget build(BuildContext context) {
     return
       Scaffold(
-          appBar: AppBar(title: Text("Trace")),
-          body: Column(
-              children: <Widget>
-              [
-                Text("Login", textScaleFactor: 3),
-                TextField(controller: this.controller, decoration: InputDecoration(labelText: "email")),
-                TextField(decoration: InputDecoration(labelText: "password")),
-                IconButton(icon: Icon(Icons.arrow_forward, size: 50), onPressed: this.clickdash),
-                Text("\n"),
-                Row(
-                    children: <Widget>
-                    [
-                      Text("Don't have an account? Signup", textScaleFactor: 1.5),
-                      IconButton(icon: Icon(Icons.account_circle_outlined, size: 30), onPressed: this.clickup)
-                    ]
-                )
-              ]
-          )
+        appBar: AppBar(title: Text("Trace")),
+        body: Column(
+            children: <Widget>
+            [
+              Text("Login", textScaleFactor: 3),
+              TextField(controller: this.controller, decoration: InputDecoration(labelText: "email")),
+              TextField(decoration: InputDecoration(labelText: "password")),
+              IconButton(icon: Icon(Icons.arrow_forward, size: 50), onPressed: this.clickdash),
+              Text("\n"),
+              Row(
+                  children: <Widget>
+                  [
+                    Text("Don't have an account? Signup", textScaleFactor: 1.5),
+                    IconButton(icon: Icon(Icons.account_circle_outlined, size: 30), onPressed: this.clickup)
+                  ]
+              )
+            ]
+        )
       );
   }
 }
@@ -99,10 +99,11 @@ class _SignUpState extends State<SignUp> {
     return
       Scaffold(
           appBar: AppBar(title: Text("Trace")),
-          body: Column(
+          body:
+          ListView(
               children: <Widget>
               [
-                Text("SignUp", textScaleFactor: 2),
+                Text("SignUp", textScaleFactor: 2, textAlign: TextAlign.center),
                 TextField(decoration: InputDecoration(labelText: "Name")),
                 TextField(decoration: InputDecoration(labelText: "Email")),
                 TextField(decoration: InputDecoration(labelText: "Mobile No")),
@@ -123,8 +124,8 @@ class _SignUpState extends State<SignUp> {
                           [
                             Text("\nCustomer", textScaleFactor: 1.5),
                             Radio(value: 1, groupValue: acctype, onChanged: (val){setacctype(val);}),
-                            Text(" Upload \n Vaccination \n Certififcates: "),
-                            IconButton(icon: Icon(Icons.upload_sharp, size: 30), onPressed: () => {})
+                            (acctype==1)? Text(" Upload \n Vaccination \n Certififcates: "): Text(" "),
+                            (acctype==1)? IconButton(icon: Icon(Icons.upload_sharp, size: 30), onPressed: () => {}): Text(" ")
                           ]
                       ),
                       Column(
@@ -132,12 +133,14 @@ class _SignUpState extends State<SignUp> {
                           [
                             Text("\t\t\tMerchant", textScaleFactor: 1.5),
                             Radio(value: 2, groupValue: acctype, onChanged: (val){setacctype(val);}),
-                            Text("Generate \nQR Code:"),
-                            IconButton(icon: Icon(Icons.qr_code, size: 30), onPressed: () => {})
+                            (acctype==2)? Text("Generate \nQR Code:"): Text(" "),
+                            (acctype==2)? IconButton(icon: Icon(Icons.qr_code, size: 30), onPressed: () => {}): Text(" ")
                           ]
                       )
                     ]
-                )
+                ),
+                TextField(decoration: InputDecoration(labelText: "Create Password")),
+                TextField(decoration: InputDecoration(labelText: "Confirm Password")),
               ]
           )
       );
@@ -163,19 +166,19 @@ class _CustomerDashState extends State<CustomerDash> {
   Widget build(BuildContext context) {
     return
       Scaffold(
-          appBar: AppBar(title: Text("Trace")),
+        appBar: AppBar(title: Text("Trace")),
           body:  Align(
-              alignment: Alignment.topLeft,
-              child:
-              Column(
-                  children: <Widget>[
-                    // Text(name, textScaleFactor: 2),
-                    Text("email: " + email + "\nMobile No:"/* + mobile*/ + "\nPin Code:"/* + pincode*/ + "\nVaccine Status:"),
-                    Text("\nScan QR Code: "),
-                    IconButton(icon: Icon(Icons.camera_alt_outlined/*,size: 40*/), onPressed: this.clickQR,)
-                  ]
-              )
-          )
+            alignment: Alignment.topLeft,
+            child:
+                Column(
+                    children: <Widget>[
+                      // Text(name, textScaleFactor: 2),
+                      Text("email: " + email + "\nMobile No:"/* + mobile*/ + "\nPin Code:"/* + pincode*/ + "\nVaccine Status:"),
+                      Text("\nScan QR Code: "),
+                      IconButton(icon: Icon(Icons.camera_alt_outlined/*,size: 40*/), onPressed: this.clickQR,)
+                    ]
+                )
+        )
       );
   }
 }
