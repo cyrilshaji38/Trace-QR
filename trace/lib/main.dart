@@ -5,8 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:image_picker/image_picker.dart';
 
-String name = "Customer Name", email, mobile, pincode, password;
-int acctype;  // 1--> customer  2--> merchant
+String name, email, mobile, pincode, password;
+int acctype, vaccine=0;  // 1--> customer  2--> merchant
 File profile;
 
 final _picker = ImagePicker();
@@ -16,14 +16,6 @@ _picFromGallery() async {
   );
     profile = File(image.path);
 }
-// final _picker1 = ImagePicker();
-// _vaccineFromGallery() async {
-//   PickedFile image1 = await  _picker1.getImage(
-//       source: ImageSource.gallery, imageQuality: 50
-//   );
-//   vaccine = File(image1.path);
-// }
-
 void _showPicker(context) {
   showModalBottomSheet(
       context: context,
@@ -47,34 +39,10 @@ void _showPicker(context) {
   );
 }
 
-// void _showPickerVaccine(context) {
-//   showModalBottomSheet(
-//       context: context,
-//       builder: (BuildContext bc) {
-//         return SafeArea(
-//           child: Container(
-//             child: new Wrap(
-//               children: <Widget>[
-//                 new ListTile(
-//                     leading: new Icon(Icons.photo_library),
-//                     title: new Text('Photo Library'),
-//                     onTap: () {
-//                       _vaccineFromGallery();
-//                       Navigator.of(context).pop();
-//                     }),
-//               ],
-//             ),
-//           ),
-//         );
-//       }
-//   );
-// }
-
 
 void main() {
   runApp(MyApp());
 }
-
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -159,6 +127,21 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
+  bool dose1 = false, dose2 = false;
+  setvaccine1(bool value){
+    setState(() {
+      dose1 = value;
+      vaccine=1;
+    });
+  }
+  setvaccine2(bool value){
+    setState(() {
+      dose2 = value;
+      vaccine=2;
+    });
+  }
+
+
   void createacc(){
     //first of all save all that input data into variables and then into the firebase database
     if(acctype==1)
@@ -213,8 +196,17 @@ class _SignUpState extends State<SignUp> {
                           [
                             Text("\nCustomer", textScaleFactor: 1.5),
                             Radio(value: 1, groupValue: acctype, onChanged: (val){setacctype(val);}),
-                            // (acctype==1)? Text(" Upload \n Vaccination \n Certificates: "): Text(" "),
-                            // (acctype==1)? IconButton(icon: Icon(Icons.upload_sharp, size: 30), onPressed: () => {}): Text(" ")
+                            (acctype==1)? Text("Vaccinations \nTaken: "): Text(" "),
+                            Row(
+                                children: <Widget>
+                                [
+                                  (acctype==1)? Checkbox(value: dose1, onChanged: (val){setvaccine1(val);}): Text(" "),
+                                  (acctype==1)?Text("Dose 1"): Text(" "),
+                                  (acctype==1)? Checkbox(value: dose2, onChanged: (val){setvaccine2(val);}): Text(" "),
+                                  (acctype==1)?Text("Dose 2"): Text(" "),
+                                ]
+                            )
+
                           ]
                       ),
                       Column(
@@ -239,7 +231,6 @@ class _SignUpState extends State<SignUp> {
                         textStyle: TextStyle(
                             color: Colors.black,
                             fontSize: 30,
-                            // fontStyle: FontStyle.
                           )
                     )
                 ),
@@ -297,7 +288,6 @@ class _CustomerDashState extends State<CustomerDash> {
                     children: <Widget>[
                       Text("Customer Name", textScaleFactor: 2),
                       GestureDetector(
-                        // onTap: () {_showPickerVaccine(context);},
                         child: CircleAvatar(
                             radius: 55, backgroundColor: Color(0xffFDCF09), child: profile != null ?
                         (ClipRRect(borderRadius: BorderRadius.circular(50), child: Image.file(profile, width: 100, height: 100, fit: BoxFit.fitHeight,),))
@@ -475,13 +465,167 @@ class MerchantDash extends StatefulWidget {
   _MerchantDashState createState() => _MerchantDashState();
 }
 
+
 class _MerchantDashState extends State<MerchantDash> {
   @override
   Widget build(BuildContext context) {
-    return
-      Scaffold(
+    return Scaffold(
         appBar: AppBar(title: Text("Trace")),
-        body: Text("LULU MALL", textScaleFactor: 2),
-      );
+        //backgroundColor: Colors.black,
+        body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      //Icon(Icons.menu, color: Colors.white,size: 52.0,),
+                      Image.asset("assets/image.png",width: 52.0,)
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(18.0),
+                  child: Text(
+                    "Welcome,  \nSelect an option",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 28.0,
+                        fontWeight: FontWeight.bold
+                    ),
+                    textAlign: TextAlign.start,
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Center(
+                    child: Wrap(
+                      spacing:20,
+                      runSpacing: 20.0,
+                      children: <Widget>[
+                        SizedBox(
+                          width:160.0,
+                          height: 160.0,
+                          child: Card(
+
+                            color: Colors.teal,
+                            elevation: 2.0,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0)
+                            ),
+                            child:Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Image.asset("assets/.png",width: 64.0,),
+                                      SizedBox(
+                                        height: 10.0,
+                                      ),
+                                      Text(
+                                        "QR Code",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5.0,
+                                      ),
+
+                                    ],
+                                  ),
+                                )
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width:160.0,
+                          height: 160.0,
+                          child: Card(
+
+                            color: Colors.teal,
+                            elevation: 2.0,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0)
+                            ),
+                            child:Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Image.asset("assets/.png",width: 64.0,),
+                                      SizedBox(
+                                        height: 10.0,
+                                      ),
+                                      Text(
+                                        "Edit Details",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5.0,
+                                      ),
+
+                                    ],
+                                  ),
+                                )
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width:160.0,
+                          height: 160.0,
+                          child: Card(
+
+                            color: Colors.teal,
+                            elevation: 2.0,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0)
+                            ),
+                            child:Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Image.asset("assets/.png",width: 64.0,),
+                                      SizedBox(
+                                        height: 10.0,
+                                      ),
+                                      Text(
+                                        "Log Summary",
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 20.0
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: 5.0,
+                                      ),
+
+                                    ],
+                                  ),
+                                )
+                            ),
+                          ),
+                        ),
+
+
+
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            )
+        )
+    );
   }
 }
