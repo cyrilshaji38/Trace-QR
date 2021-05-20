@@ -30,6 +30,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   qr_code_scanner: ^0.4.0
   pretty_qr_code: ^2.0.1
+  image_picker: ^0.7.5+2
 
 dev_dependencies:
   flutter_test:
@@ -47,8 +48,7 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  assets:
-    - assets/images/cyril.png
+  #assets:
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

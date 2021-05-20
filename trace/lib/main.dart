@@ -3,14 +3,78 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
+import 'package:image_picker/image_picker.dart';
 
-String name, email, mobile, pincode, password;
+String name = "Customer Name", email, mobile, pincode, password;
 int acctype;  // 1--> customer  2--> merchant
-Image profile, qr;
+File profile;
+
+final _picker = ImagePicker();
+_picFromGallery() async {
+  PickedFile image = await  _picker.getImage(
+      source: ImageSource.gallery, imageQuality: 50
+  );
+    profile = File(image.path);
+}
+// final _picker1 = ImagePicker();
+// _vaccineFromGallery() async {
+//   PickedFile image1 = await  _picker1.getImage(
+//       source: ImageSource.gallery, imageQuality: 50
+//   );
+//   vaccine = File(image1.path);
+// }
+
+void _showPicker(context) {
+  showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return SafeArea(
+          child: Container(
+            child: new Wrap(
+              children: <Widget>[
+                new ListTile(
+                    leading: new Icon(Icons.photo_library),
+                    title: new Text('Photo Library'),
+                    onTap: () {
+                      _picFromGallery();
+                      Navigator.of(context).pop();
+                    }),
+              ],
+            ),
+          ),
+        );
+      }
+  );
+}
+
+// void _showPickerVaccine(context) {
+//   showModalBottomSheet(
+//       context: context,
+//       builder: (BuildContext bc) {
+//         return SafeArea(
+//           child: Container(
+//             child: new Wrap(
+//               children: <Widget>[
+//                 new ListTile(
+//                     leading: new Icon(Icons.photo_library),
+//                     title: new Text('Photo Library'),
+//                     onTap: () {
+//                       _vaccineFromGallery();
+//                       Navigator.of(context).pop();
+//                     }),
+//               ],
+//             ),
+//           ),
+//         );
+//       }
+//   );
+// }
+
 
 void main() {
   runApp(MyApp());
 }
+
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -126,10 +190,22 @@ class _SignUpState extends State<SignUp> {
                     children: <Widget>
                     [
                       Text("Upload Profile Picture: ", textScaleFactor: 1.5),
-                      IconButton(icon: Icon(Icons.upload_sharp, size: 30), onPressed: () => {})
+                      GestureDetector(
+                          onTap: () {_showPicker(context);},
+                          child: CircleAvatar(
+                            radius: 55, backgroundColor: Color(0xffFDCF09), child: profile != null ?
+                          (ClipRRect(borderRadius: BorderRadius.circular(50), child: Image.file(profile, width: 100, height: 100, fit: BoxFit.fitHeight,),))
+                          :
+                          (
+                              Container(decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(50)), width: 100, height: 100,
+                              child: Icon(Icons.camera_alt, color: Colors.grey[800],),)
+                          )
+                          )
+                      )
                     ]
                 ),
                 Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>
                     [
                       Column(
@@ -137,14 +213,14 @@ class _SignUpState extends State<SignUp> {
                           [
                             Text("\nCustomer", textScaleFactor: 1.5),
                             Radio(value: 1, groupValue: acctype, onChanged: (val){setacctype(val);}),
-                            (acctype==1)? Text(" Upload \n Vaccination \n Certififcates: "): Text(" "),
-                            (acctype==1)? IconButton(icon: Icon(Icons.upload_sharp, size: 30), onPressed: () => {}): Text(" ")
+                            // (acctype==1)? Text(" Upload \n Vaccination \n Certificates: "): Text(" "),
+                            // (acctype==1)? IconButton(icon: Icon(Icons.upload_sharp, size: 30), onPressed: () => {}): Text(" ")
                           ]
                       ),
                       Column(
                           children: <Widget>
                           [
-                            Text("\t\t\tMerchant", textScaleFactor: 1.5),
+                            Text("\n\n\nMerchant", textScaleFactor: 1.5),
                             Radio(value: 2, groupValue: acctype, onChanged: (val){setacctype(val);}),
                             (acctype==2)? Text("Generate \nQR Code:"): Text(" "),
                             (acctype==2)? IconButton(icon: Icon(Icons.qr_code, size: 30), onPressed: this.clickQR): Text(" ")
@@ -186,7 +262,7 @@ class _CreateQRState extends State<CreateQR> {
     return Scaffold(
         body: Center(
             child: PrettyQr(
-                image: AssetImage("assets/images/cyril.png"),
+                image: FileImage(profile),
                 typeNumber: 3,
                 size: 300,
                 data: 'https://www.linkedin.com',
@@ -219,10 +295,22 @@ class _CustomerDashState extends State<CustomerDash> {
             child:
                 Column(
                     children: <Widget>[
-                      // Text(name, textScaleFactor: 2),
-                      Text("email: " + email + "\nMobile No:"/* + mobile*/ + "\nPin Code:"/* + pincode*/ + "\nVaccine Status:", textScaleFactor: 1.5),
+                      Text("Customer Name", textScaleFactor: 2),
+                      GestureDetector(
+                        // onTap: () {_showPickerVaccine(context);},
+                        child: CircleAvatar(
+                            radius: 55, backgroundColor: Color(0xffFDCF09), child: profile != null ?
+                        (ClipRRect(borderRadius: BorderRadius.circular(50), child: Image.file(profile, width: 100, height: 100, fit: BoxFit.fitHeight,),))
+                            :
+                        (
+                            Container(decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(50)), width: 100, height: 100,
+                              child: Icon(Icons.camera_alt, color: Colors.grey[800],),)
+                        )
+                        )
+                      ),
+                      Text("\nemail: " + email + "\nMobile No:"/* + mobile*/ + "\nPin Code:"/* + pincode*/ + "\nVaccine Status:", textScaleFactor: 1.5),
                       Text("\nScan QR Code: ", textScaleFactor: 1.5),
-                      IconButton(icon: Icon(Icons.camera_alt_outlined ,size: 40), onPressed: this.clickQR,)
+                      IconButton(icon: Icon(Icons.camera_alt_outlined ,size: 40), onPressed: this.clickQR,),
                     ]
                 )
         )
