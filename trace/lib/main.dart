@@ -4,10 +4,11 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-String name, email, mobile, pincode, password;
-int acctype, vaccine=0;  // 1--> customer  2--> merchant
-File profile;
+String name, email, mobile, pincode, password, password1;
+int acctype, vaccine=0;  // acctype (1--> customer  2--> merchant)
+File profile, qr;
 
 final _picker = ImagePicker();
 _picFromGallery() async {
@@ -67,11 +68,9 @@ class Signin extends StatefulWidget {
 }
 
 class _SigninState extends State<Signin> {
-  // String email;
   TextEditingController controller = new TextEditingController();
 
   void clickdash() {
-    email = controller.text;
     Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash()));
   }
 
@@ -88,7 +87,7 @@ class _SigninState extends State<Signin> {
             children: <Widget>
             [
               Text("Login", textScaleFactor: 3),
-              TextField(controller: this.controller, decoration: InputDecoration(labelText: "email")),
+              TextField(decoration: InputDecoration(labelText: "email")),
               TextField(decoration: InputDecoration(labelText: "password")),
               IconButton(icon: Icon(Icons.arrow_forward, size: 50), onPressed: this.clickdash),
               Text("\n"),
@@ -124,6 +123,7 @@ class _SignUpState extends State<SignUp> {
   setacctype(int val){
     setState(() {
       acctype = val;
+      print(name+email+mobile+pincode+password+"$acctype $vaccine");
     });
   }
 
@@ -131,13 +131,14 @@ class _SignUpState extends State<SignUp> {
   setvaccine1(bool value){
     setState(() {
       dose1 = value;
-      vaccine=1;
+      dose1?vaccine=1:vaccine=0;
     });
   }
   setvaccine2(bool value){
     setState(() {
       dose2 = value;
-      vaccine=2;
+      // ignore: unnecessary_statements
+      dose2?vaccine=2:(dose1?vaccine=1:vaccine=0);
     });
   }
 
@@ -148,6 +149,17 @@ class _SignUpState extends State<SignUp> {
       Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash()));
     else if(acctype==2)
       Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantDash()));
+  }
+  void pwdmismatch(){
+    Fluttertoast.showToast(
+        msg: "Passwords do not match!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
   }
 
   void clickQR() {
@@ -164,10 +176,10 @@ class _SignUpState extends State<SignUp> {
               children: <Widget>
               [
                 Text("SignUp", textScaleFactor: 2, textAlign: TextAlign.center),
-                TextField(decoration: InputDecoration(labelText: "Name")),
-                TextField(decoration: InputDecoration(labelText: "Email")),
-                TextField(decoration: InputDecoration(labelText: "Mobile No")),
-                TextField(decoration: InputDecoration(labelText: "Pin Code")),
+                TextField(decoration: InputDecoration(labelText: "Name"), onChanged: (value) => name = value),
+                TextField(decoration: InputDecoration(labelText: "Email"), onChanged: (value) => email = value),
+                TextField(decoration: InputDecoration(labelText: "Mobile No"), onChanged: (value) => mobile = value),
+                TextField(decoration: InputDecoration(labelText: "Pin Code"), onChanged: (value) => pincode = value),
                 Text("\n"),
                 Row(
                     children: <Widget>
@@ -220,10 +232,10 @@ class _SignUpState extends State<SignUp> {
                       )
                     ]
                 ),
-                TextField(decoration: InputDecoration(labelText: "Create Password")),
-                TextField(decoration: InputDecoration(labelText: "Confirm Password")),
+                TextField(decoration: InputDecoration(labelText: "Create Password"), onChanged: (value) => password = value),
+                TextField(decoration: InputDecoration(labelText: "Confirm Password"), onChanged: (value) => password1 = value),
                 TextButton(
-                    onPressed: this.createacc,
+                    onPressed: password1==password? this.createacc: this.pwdmismatch,
                     child: Text("SignUp"),
                     style: TextButton.styleFrom(
                         primary: Colors.white,
