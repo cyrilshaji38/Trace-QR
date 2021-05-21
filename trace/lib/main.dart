@@ -1,4 +1,6 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
@@ -6,9 +8,11 @@ import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-String name, email, mobile, pincode, password, password1;
-int acctype, vaccine=0;  // acctype (1--> customer  2--> merchant)
-File profile, qr;
+String name = "Cyril Shaji", email, mobile = "9568394830", pincode = "680688", password, password1,qrdata;
+int acctype=1, vaccine=0;  // acctype (1--> customer  2--> merchant)
+File profile,qr;
+GlobalKey _globalKey = new GlobalKey();
+
 
 final _picker = ImagePicker();
 _picFromGallery() async {
@@ -123,7 +127,7 @@ class _SignUpState extends State<SignUp> {
   setacctype(int val){
     setState(() {
       acctype = val;
-      print(name+email+mobile+pincode+password+"$acctype $vaccine");
+      // print(name+email+mobile+pincode+password+"$acctype $vaccine");
     });
   }
 
@@ -163,7 +167,20 @@ class _SignUpState extends State<SignUp> {
   }
 
   void clickQR() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQR()));
+    if(profile != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQR()));
+    }
+    else {
+      Fluttertoast.showToast(
+          msg: "Add profile picture first!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }
   }
 
   @override
@@ -227,7 +244,7 @@ class _SignUpState extends State<SignUp> {
                             Text("\n\n\nMerchant", textScaleFactor: 1.5),
                             Radio(value: 2, groupValue: acctype, onChanged: (val){setacctype(val);}),
                             (acctype==2)? Text("Generate \nQR Code:"): Text(" "),
-                            (acctype==2)? IconButton(icon: Icon(Icons.qr_code, size: 30), onPressed: this.clickQR): Text(" ")
+                            (acctype==2)? IconButton(icon: Icon(Icons.qr_code, size: 30), onPressed: this.clickQR): Text(" "),
                           ]
                       )
                     ]
@@ -263,14 +280,19 @@ class _CreateQRState extends State<CreateQR> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-            child: PrettyQr(
-                image: FileImage(profile),
-                typeNumber: 3,
-                size: 300,
-                data: 'https://www.linkedin.com',
-                errorCorrectLevel: QrErrorCorrectLevel.M,
-                roundEdges: true)));
+        body:Center(
+            child:RepaintBoundary(
+                key: _globalKey,
+                child: PrettyQr(
+                    image: FileImage(profile),
+                    typeNumber: 3,
+                    size: 300,
+                    data: "$mobile",
+                    errorCorrectLevel: QrErrorCorrectLevel.M,
+                    roundEdges: true)
+            )
+        )
+    );
   }
 }
 
@@ -296,9 +318,9 @@ class _CustomerDashState extends State<CustomerDash> {
           body:  Align(
             alignment: Alignment.topLeft,
             child:
-                Column(
+                ListView(
                     children: <Widget>[
-                      Text("Customer Name", textScaleFactor: 2),
+                      Text("Customer Name", textScaleFactor: 2, textAlign: TextAlign.center),
                       GestureDetector(
                         child: CircleAvatar(
                             radius: 55, backgroundColor: Color(0xffFDCF09), child: profile != null ?
@@ -310,9 +332,9 @@ class _CustomerDashState extends State<CustomerDash> {
                         )
                         )
                       ),
-                      Text("\nemail: " + email + "\nMobile No:"/* + mobile*/ + "\nPin Code:"/* + pincode*/ + "\nVaccine Status:", textScaleFactor: 1.5),
+                      Text("\nemail: " /*+ email*/ + "\nMobile No:"/* + mobile*/ + "\nPin Code:"/* + pincode*/ + "\nVaccine Status:", textScaleFactor: 1.5),
                       Text("\nScan QR Code: ", textScaleFactor: 1.5),
-                      IconButton(icon: Icon(Icons.camera_alt_outlined ,size: 40), onPressed: this.clickQR,),
+                      IconButton(icon: Icon(Icons.camera_alt_outlined ,size: 40), onPressed: this.clickQR,  alignment: Alignment.centerLeft),
                     ]
                 )
         )
@@ -357,7 +379,7 @@ class _ScanQRState extends State<ScanQR> {
                 children: <Widget>[
                   if (result != null)
                     Text(
-                        'Barcode Type: ${describeEnum(result.format)}   Data: ${result.code}')
+                        'Data: ${result.code}')
                   else
                     Text('Scan a code'),
                   Row(
@@ -370,6 +392,7 @@ class _ScanQRState extends State<ScanQR> {
                             onPressed: () async {
                               await controller?.toggleFlash();
                               setState(() {});
+
                             },
                             child: FutureBuilder(
                               future: controller?.getFlashStatus(),
@@ -408,6 +431,7 @@ class _ScanQRState extends State<ScanQR> {
                         child: ElevatedButton(
                           onPressed: () async {
                             await controller?.pauseCamera();
+                            // print(qrdata);
                           },
                           child: Text('pause', style: TextStyle(fontSize: 20)),
                         ),
@@ -459,6 +483,7 @@ class _ScanQRState extends State<ScanQR> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
+        qrdata = "${result.code}";
       });
     });
   }
@@ -494,7 +519,7 @@ class _MerchantDashState extends State<MerchantDash> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       //Icon(Icons.menu, color: Colors.white,size: 52.0,),
-                      Image.asset("assets/image.png",width: 52.0,)
+                      // Image.asset("assets/image.png",width: 52.0,)
                     ],
                   ),
                 ),
@@ -532,7 +557,7 @@ class _MerchantDashState extends State<MerchantDash> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     children: <Widget>[
-                                      Image.asset("assets/.png",width: 64.0,),
+                                      // Image.asset("assets/.png",width: 64.0,),
                                       SizedBox(
                                         height: 10.0,
                                       ),
@@ -569,7 +594,7 @@ class _MerchantDashState extends State<MerchantDash> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     children: <Widget>[
-                                      Image.asset("assets/.png",width: 64.0,),
+                                      // Image.asset("assets/.png",width: 64.0,),
                                       SizedBox(
                                         height: 10.0,
                                       ),
@@ -606,7 +631,7 @@ class _MerchantDashState extends State<MerchantDash> {
                                   padding: const EdgeInsets.all(8.0),
                                   child: Column(
                                     children: <Widget>[
-                                      Image.asset("assets/.png",width: 64.0,),
+                                      // Image.asset("assets/.png",width: 64.0,),
                                       SizedBox(
                                         height: 10.0,
                                       ),
