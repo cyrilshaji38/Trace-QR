@@ -197,6 +197,8 @@ class _SignUpState extends State<SignUp> {
                 TextField(decoration: InputDecoration(labelText: "Email"), onChanged: (value) => email = value),
                 TextField(decoration: InputDecoration(labelText: "Mobile No"), onChanged: (value) => mobile = value),
                 TextField(decoration: InputDecoration(labelText: "Pin Code"), onChanged: (value) => pincode = value),
+                TextField(decoration: InputDecoration(labelText: "Create Password"), onChanged: (value) => password = value),
+                TextField(decoration: InputDecoration(labelText: "Confirm Password"), onChanged: (value) => password1 = value),
                 Text("\n"),
                 Row(
                     children: <Widget>
@@ -249,8 +251,7 @@ class _SignUpState extends State<SignUp> {
                       )
                     ]
                 ),
-                TextField(decoration: InputDecoration(labelText: "Create Password"), onChanged: (value) => password = value),
-                TextField(decoration: InputDecoration(labelText: "Confirm Password"), onChanged: (value) => password1 = value),
+                Text("\n"),
                 TextButton(
                     onPressed: password1==password? this.createacc: this.pwdmismatch,
                     child: Text("SignUp"),
