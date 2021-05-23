@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'signup.dart';
 import 'c_dash.dart';
+import 'main.dart';
 
 class Signin extends StatefulWidget {
   const Signin({Key key}) : super(key: key);
@@ -18,6 +19,7 @@ class _SigninState extends State<Signin> {
 
   void clickdash() {
     Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash()));
+    email = _email;
   }
 
   void clickup() {

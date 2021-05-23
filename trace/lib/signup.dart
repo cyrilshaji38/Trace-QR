@@ -1,5 +1,6 @@
 import 'dart:ui';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:io';
@@ -7,6 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trace/users.dart';
 import 'main.dart';
 import 'c_dash.dart';
 import 'm_dash.dart';
@@ -82,6 +84,12 @@ class _SignUpState extends State<SignUp> {
   }
 
 
+  void pwdcheck(){
+    if(password1==password)
+      this.createacc();
+    else
+      this.pwdmismatch();
+  }
   void createacc(){
     //first of all save all that input data into variables and then into the firebase database
     if(acctype==1)
@@ -188,13 +196,21 @@ class _SignUpState extends State<SignUp> {
                 ),
                 Text("\n"),
                 TextButton(
-                    onPressed: (){
-                      auth.createUserWithEmailAndPassword(email: email, password: password,).then((_){
-                        if(password1==password)
-                          this.createacc();
-                        else
-                          this.pwdmismatch();
-                      });},
+                    onPressed:
+                        () async {
+                      try {
+                        await Firebase.initializeApp();
+                        UserCredential user =
+                        await auth.createUserWithEmailAndPassword(email: email, password: password,).then(this.pwdcheck(););
+
+                        User updateUser = FirebaseAuth.instance.currentUser;
+                        updateUser.updateProfile(displayName: _usernameController.text);
+                        userSetup(_usernameController.text);
+                        Navigator.of(context).pushNamed(AppRoutes.menu);
+                      } on FirebaseAuthException catch (e) {
+                        print(e.toString());
+                      }
+                    },
                     child: Text("SignUp"),
                     style: TextButton.styleFrom(
                         primary: Colors.white,

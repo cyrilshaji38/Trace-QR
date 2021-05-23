@@ -61,7 +61,7 @@ class _CustomerDashState extends State<CustomerDash> {
                         )
                         )
                     ),
-                    Text("\nemail: " /*+ email*/ + "\nMobile No:"/* + mobile*/ + "\nPin Code:"/* + pincode*/ + "\nVaccine Status:", textScaleFactor: 1.5),
+                    Text("\nemail: $email \nMobile No:"/* + mobile*/ + "\nPin Code:"/* + pincode*/ + "\nVaccine Status:", textScaleFactor: 1.5),
                     Text("\nScan QR Code: ", textScaleFactor: 1.5),
                     IconButton(icon: Icon(Icons.camera_alt_outlined ,size: 40), onPressed: this.clickQR,  alignment: Alignment.centerLeft),
                   ]
