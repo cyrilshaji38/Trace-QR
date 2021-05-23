@@ -10,8 +10,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 String name = "Cyril Shaji", email, mobile = "9568394830", pincode = "680688", password, password1,qrdata;
 int acctype=1, vaccine=0;  // acctype (1--> customer  2--> merchant)
-File profile,qr;
-GlobalKey _globalKey = new GlobalKey();
+File profile;
+
 
 
 final _picker = ImagePicker();
@@ -222,7 +222,7 @@ class _SignUpState extends State<SignUp> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: <Widget>
                     [
-                      Column(
+                       Column(
                           children: <Widget>
                           [
                             Text("\nCustomer", textScaleFactor: 1.5),
@@ -282,8 +282,6 @@ class _CreateQRState extends State<CreateQR> {
   Widget build(BuildContext context) {
     return Scaffold(
         body:Center(
-            child:RepaintBoundary(
-                key: _globalKey,
                 child: PrettyQr(
                     image: FileImage(profile),
                     typeNumber: 3,
@@ -291,7 +289,6 @@ class _CreateQRState extends State<CreateQR> {
                     data: "$mobile",
                     errorCorrectLevel: QrErrorCorrectLevel.M,
                     roundEdges: true)
-            )
         )
     );
   }
