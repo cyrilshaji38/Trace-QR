@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:io';
@@ -49,6 +50,8 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+
+  final auth = FirebaseAuth.instance;
 
   @override
   void initState(){
@@ -125,12 +128,12 @@ class _SignUpState extends State<SignUp> {
               children: <Widget>
               [
                 Text("SignUp", textScaleFactor: 2, textAlign: TextAlign.center),
-                TextField(decoration: InputDecoration(labelText: "Name"), onChanged: (value) => name = value),
-                TextField(decoration: InputDecoration(labelText: "Email"), onChanged: (value) => email = value),
-                TextField(decoration: InputDecoration(labelText: "Mobile No"), onChanged: (value) => mobile = value),
+                TextField(keyboardType: TextInputType.name, decoration: InputDecoration(labelText: "Name"), onChanged: (value) => name = value),
+                TextField(keyboardType: TextInputType.emailAddress, decoration: InputDecoration(labelText: "Email"), onChanged: (value) => email = value),
+                TextField(keyboardType: TextInputType.phone ,decoration: InputDecoration(labelText: "Mobile No"), onChanged: (value) => mobile = value),
                 TextField(decoration: InputDecoration(labelText: "Pin Code"), onChanged: (value) => pincode = value),
-                TextField(decoration: InputDecoration(labelText: "Create Password"), onChanged: (value) => password = value),
-                TextField(decoration: InputDecoration(labelText: "Confirm Password"), onChanged: (value) => password1 = value),
+                TextField(obscureText: true, decoration: InputDecoration(labelText: "Create Password"), onChanged: (value) => password = value),
+                TextField(obscureText: true, decoration: InputDecoration(labelText: "Confirm Password"), onChanged: (value) => password1 = value),
                 Text("\n"),
                 Row(
                     children: <Widget>
@@ -185,7 +188,13 @@ class _SignUpState extends State<SignUp> {
                 ),
                 Text("\n"),
                 TextButton(
-                    onPressed: password1==password? this.createacc: this.pwdmismatch,
+                    onPressed: (){
+                      auth.createUserWithEmailAndPassword(email: email, password: password,).then((_){
+                        if(password1==password)
+                          this.createacc();
+                        else
+                          this.pwdmismatch();
+                      });},
                     child: Text("SignUp"),
                     style: TextButton.styleFrom(
                         primary: Colors.white,

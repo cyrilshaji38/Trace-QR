@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'signin.dart';
+import 'package:firebase_core/firebase_core.dart';
+
 
 String name = "Cyril Shaji", email, mobile = "9568394830", pincode = "680688", password, password1,qrdata;
 int acctype=1, vaccine=0;  // acctype (1--> customer  2--> merchant)
 File profile;
 
-void main() {
+void main() async{
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MyApp());
 }
 

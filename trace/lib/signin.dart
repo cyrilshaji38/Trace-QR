@@ -1,8 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'signup.dart';
 import 'c_dash.dart';
-
 
 class Signin extends StatefulWidget {
   const Signin({Key key}) : super(key: key);
@@ -12,7 +12,9 @@ class Signin extends StatefulWidget {
 }
 
 class _SigninState extends State<Signin> {
-  TextEditingController controller = new TextEditingController();
+
+  String _email, _password;
+  final auth = FirebaseAuth.instance;
 
   void clickdash() {
     Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash()));
@@ -31,9 +33,9 @@ class _SigninState extends State<Signin> {
               children: <Widget>
               [
                 Text("Login", textScaleFactor: 3),
-                TextField(decoration: InputDecoration(labelText: "email")),
-                TextField(decoration: InputDecoration(labelText: "password")),
-                IconButton(icon: Icon(Icons.arrow_forward, size: 50), onPressed: this.clickdash),
+                TextField(keyboardType: TextInputType.emailAddress, decoration: InputDecoration(labelText: "email"), onChanged: (value) {setState(() {_email = value.trim();});}),
+                TextField(obscureText: true, decoration: InputDecoration(labelText: "password"), onChanged: (value) {setState(() {_password = value.trim();});}),
+                IconButton(icon: Icon(Icons.arrow_forward, size: 50), onPressed: (){auth.signInWithEmailAndPassword(email: _email, password: _password).then((_){this.clickdash();});}),
                 Text("\n"),
                 Row(
                     children: <Widget>
