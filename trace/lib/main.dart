@@ -1,12 +1,25 @@
+// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'signin.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+final auth = FirebaseAuth.instance;
 
-String name = "Cyril Shaji", email, mobile = "9568394830", pincode = "680688", password, password1,qrdata;
+String name, email, mobile, pincode, password, /*password1,*/ qrdata;
 int acctype=1, vaccine=0;  // acctype (1--> customer  2--> merchant)
 File profile;
+
+// String c_email = auth.currentUser.email;
+// void getUserData() async{
+//   var firebaseUser = await auth.instance.currentUser();
+//   firestoreInstance.collection("users").document(firebaseUser.uid).get().then((value){
+//     print(value.data);
+//   });
+// }
+// String c_name =
+
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();

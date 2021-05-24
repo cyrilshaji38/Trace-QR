@@ -1,6 +1,7 @@
 import 'dart:ui';
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:io';
@@ -8,10 +9,12 @@ import 'package:flutter/foundation.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:trace/users.dart';
+import 'package:trace/addusers.dart';
 import 'main.dart';
 import 'c_dash.dart';
 import 'm_dash.dart';
+
+
 
 final _picker = ImagePicker();
 _picFromGallery() async {
@@ -64,7 +67,6 @@ class _SignUpState extends State<SignUp> {
   setacctype(int val){
     setState(() {
       acctype = val;
-      // print(name+email+mobile+pincode+password+"$acctype $vaccine");
     });
   }
 
@@ -84,30 +86,33 @@ class _SignUpState extends State<SignUp> {
   }
 
 
-  void pwdcheck(){
-    if(password1==password)
-      this.createacc();
-    else
-      this.pwdmismatch();
-  }
+  // void pwdcheck(){
+  //   if(password1==password)
+  //     this.createacc();
+  //   else
+  //     this.pwdmismatch();
+  // }
   void createacc(){
-    //first of all save all that input data into variables and then into the firebase database
+    String uid = auth.currentUser.uid.toString();
+    // addUser(name, mobile, pincode, email, acctype, vaccine);
+    addUser(name, email, mobile, pincode, acctype, vaccine, uid);
+
     if(acctype==1)
       Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash()));
     else if(acctype==2)
       Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantDash()));
   }
-  void pwdmismatch(){
-    Fluttertoast.showToast(
-        msg: "Passwords do not match!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
-        textColor: Colors.white,
-        fontSize: 16.0
-    );
-  }
+  // void pwdmismatch(){
+  //   Fluttertoast.showToast(
+  //       msg: "Passwords do not match!",
+  //       toastLength: Toast.LENGTH_SHORT,
+  //       gravity: ToastGravity.CENTER,
+  //       timeInSecForIosWeb: 1,
+  //       backgroundColor: Colors.red,
+  //       textColor: Colors.white,
+  //       fontSize: 16.0
+  //   );
+  // }
 
   void clickQR() {
     if(profile != null) {
@@ -141,7 +146,7 @@ class _SignUpState extends State<SignUp> {
                 TextField(keyboardType: TextInputType.phone ,decoration: InputDecoration(labelText: "Mobile No"), onChanged: (value) => mobile = value),
                 TextField(decoration: InputDecoration(labelText: "Pin Code"), onChanged: (value) => pincode = value),
                 TextField(obscureText: true, decoration: InputDecoration(labelText: "Create Password"), onChanged: (value) => password = value),
-                TextField(obscureText: true, decoration: InputDecoration(labelText: "Confirm Password"), onChanged: (value) => password1 = value),
+                // TextField(obscureText: true, decoration: InputDecoration(labelText: "Confirm Password"), onChanged: (value) => password1 = value),
                 Text("\n"),
                 Row(
                     children: <Widget>
@@ -196,21 +201,6 @@ class _SignUpState extends State<SignUp> {
                 ),
                 Text("\n"),
                 TextButton(
-                    onPressed:
-                        () async {
-                      try {
-                        await Firebase.initializeApp();
-                        UserCredential user =
-                        await auth.createUserWithEmailAndPassword(email: email, password: password,).then(this.pwdcheck(););
-
-                        User updateUser = FirebaseAuth.instance.currentUser;
-                        updateUser.updateProfile(displayName: _usernameController.text);
-                        userSetup(_usernameController.text);
-                        Navigator.of(context).pushNamed(AppRoutes.menu);
-                      } on FirebaseAuthException catch (e) {
-                        print(e.toString());
-                      }
-                    },
                     child: Text("SignUp"),
                     style: TextButton.styleFrom(
                         primary: Colors.white,
@@ -219,7 +209,8 @@ class _SignUpState extends State<SignUp> {
                           color: Colors.black,
                           fontSize: 30,
                         )
-                    )
+                    ),
+                    onPressed: (){auth.createUserWithEmailAndPassword(email: email, password: password).then((_){this.createacc();});}
                 ),
                 Text("\n\n\n")
               ]

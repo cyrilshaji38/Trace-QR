@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'signup.dart';
@@ -15,7 +14,6 @@ class Signin extends StatefulWidget {
 class _SigninState extends State<Signin> {
 
   String _email, _password;
-  final auth = FirebaseAuth.instance;
 
   void clickdash() {
     Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash()));
