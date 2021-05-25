@@ -3,12 +3,12 @@
 
 Team ID: BFH/recapacKUJt07GOg9/2021
 
-##Team Members:
-
+## Team Members:
 Cyril Shaji
 
 Nikita Mathew
 
 Neomi Sony
 
-##App Name: TRACE
+## App Name: 
+TRACE
