@@ -3,11 +3,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:trace/signup.dart';
-import 'database.dart';
+import 'package:Trace/screens/signup.dart';
+import '../models/database.dart';
 import 'signin.dart';
-import 'package:trace/signin.dart';
-import 'main.dart';
+import 'package:Trace/screens/signin.dart';
+import '../main.dart';
 
 class MerchantDash extends StatefulWidget {
 

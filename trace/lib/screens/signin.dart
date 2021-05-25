@@ -1,11 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
-import 'package:trace/c_dash.dart';
-import 'package:trace/m_dash.dart';
-import 'database.dart';
+import 'package:Trace/screens/c_dash.dart';
+import 'package:Trace/screens/m_dash.dart';
+import '../models/database.dart';
 import 'signup.dart';
-import 'main.dart';
+import '../main.dart';
 
 String acctype3;
 int acctype2;

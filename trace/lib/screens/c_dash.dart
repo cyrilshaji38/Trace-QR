@@ -5,9 +5,9 @@ import 'package:flutter/rendering.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:trace/signin.dart';
-import 'database.dart';
-import 'main.dart';
+import 'package:Trace/screens/signin.dart';
+import '../models/database.dart';
+import '../main.dart';
 
 class CustomerDash extends StatefulWidget {
 
