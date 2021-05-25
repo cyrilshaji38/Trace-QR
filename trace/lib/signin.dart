@@ -1,5 +1,8 @@
+// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+// import 'package:trace/database.dart';
+// import 'database.dart';
 import 'signup.dart';
 import 'c_dash.dart';
 import 'main.dart';
@@ -15,9 +18,9 @@ class _SigninState extends State<Signin> {
 
   String _email, _password;
 
-  void clickdash() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash()));
-    email = _email;
+  Future<void> clickdash() async {
+    uidC= auth.currentUser.uid;
+    Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash(uidC)));
   }
 
   void clickup() {

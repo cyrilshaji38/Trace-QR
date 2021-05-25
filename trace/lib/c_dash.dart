@@ -1,73 +1,42 @@
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'database.dart';
 import 'main.dart';
-import 'signin.dart';
 
+class CustomerDash extends StatelessWidget {
+  final String documentId;
 
-class CustomerDash extends StatefulWidget {
-  const CustomerDash({Key key}) : super(key: key);
-
-  @override
-  _CustomerDashState createState() => _CustomerDashState();
-}
-
-class _CustomerDashState extends State<CustomerDash> {
-
-  void clickQR() {
-    Navigator.push(context, MaterialPageRoute(builder: (context) => ScanQR()));
-  }
-
-  void logout(){
-    {Navigator.push(context, MaterialPageRoute(builder: (context) => Signin()));}
-  }
+  CustomerDash(this.documentId);
 
   @override
   Widget build(BuildContext context) {
-    return
-      Scaffold(
-          appBar: AppBar(
-            title: Text("Trace"),
-            actions: <Widget>[
-              TextButton(
-                  onPressed: this.logout,
-                  child: Row(
-                      children: <Widget>[
-                        Text('Logout '),
-                        Icon(Icons.logout)
-                      ]
-                  ),
-                  style: TextButton.styleFrom(primary: Colors.white),
-              )
-            ]
-          ),
-          body:  Align(
-              alignment: Alignment.topLeft,
-              child:
-              ListView(
-                  children: <Widget>[
-                    Text("Customer Name", textScaleFactor: 2, textAlign: TextAlign.center),
-                    GestureDetector(
-                        child: CircleAvatar(
-                            radius: 55, backgroundColor: Color(0xffFDCF09), child: profile != null ?
-                        (ClipRRect(borderRadius: BorderRadius.circular(50), child: Image.file(profile, width: 100, height: 100, fit: BoxFit.fitHeight,),))
-                            :
-                        (
-                            Container(decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(50)), width: 100, height: 100,
-                              child: Icon(Icons.camera_alt, color: Colors.grey[800],),)
-                        )
-                        )
-                    ),
-                    Text("\nemail: $email \nMobile No:"/* + mobile*/ + "\nPin Code:"/* + pincode*/ + "\nVaccine Status:", textScaleFactor: 1.5),
-                    Text("\nScan QR Code: ", textScaleFactor: 1.5),
-                    IconButton(icon: Icon(Icons.camera_alt_outlined ,size: 40), onPressed: this.clickQR,  alignment: Alignment.centerLeft),
-                  ]
-              )
-          )
-      );
+
+    return FutureBuilder<DocumentSnapshot>(
+      future: users.doc(documentId).get(),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+
+        if (snapshot.hasError) {
+          return Text("Something went wrong");
+        }
+
+        if (snapshot.hasData && !snapshot.data.exists) {
+          return Text("Document does not exist");
+        }
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          Map<String, dynamic> data = snapshot.data.data();
+          return Text("Name: ${data['Name']}");
+        }
+
+        return Text("loading");
+      },
+    );
   }
 }
 
@@ -111,70 +80,20 @@ class _ScanQRState extends State<ScanQR> {
                         'Data: ${result.code}')
                   else
                     Text('Scan a code'),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.all(8),
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await controller?.toggleFlash();
-                              setState(() {});
-
-                            },
-                            child: FutureBuilder(
-                              future: controller?.getFlashStatus(),
-                              builder: (context, snapshot) {
-                                return Text('Flash: ${snapshot.data}');
-                              },
-                            )),
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(8),
-                        child: ElevatedButton(
-                            onPressed: () async {
-                              await controller?.flipCamera();
-                              setState(() {});
-                            },
-                            child: FutureBuilder(
-                              future: controller?.getCameraInfo(),
-                              builder: (context, snapshot) {
-                                if (snapshot.data != null) {
-                                  return Text(
-                                      'Camera facing ${describeEnum(snapshot.data)}');
-                                } else {
-                                  return Text('loading');
-                                }
-                              },
-                            )),
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Container(
-                        margin: EdgeInsets.all(8),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            await controller?.pauseCamera();
-                            // print(qrdata);
+                  Container(
+                    margin: EdgeInsets.all(8),
+                    child: ElevatedButton(
+                        onPressed: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => PlacesVisited()));
+                          setState(() {});
                           },
-                          child: Text('pause', style: TextStyle(fontSize: 20)),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.all(8),
-                        child: ElevatedButton(
-                          onPressed: () async {
-                            await controller?.resumeCamera();
-                          },
-                          child: Text('resume', style: TextStyle(fontSize: 20)),
-                        ),
-                      )
-                    ],
+                        child: FutureBuilder(
+                          future: controller?.getFlashStatus(),
+                          builder: (context, snapshot) {
+                            return Text('Scan Complete');
+                            },
+                        )
+                    ),
                   ),
                 ],
               ),
@@ -212,7 +131,7 @@ class _ScanQRState extends State<ScanQR> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
-        qrdata = "${result.code}";
+        qrdataC = "${result.code}";
       });
     });
   }
@@ -223,3 +142,26 @@ class _ScanQRState extends State<ScanQR> {
     super.dispose();
   }
 }
+class PlacesVisited extends StatefulWidget {
+  const PlacesVisited({Key key}) : super(key: key);
+
+  @override
+  _PlacesVisitedState createState() => _PlacesVisitedState();
+}
+
+class _PlacesVisitedState extends State<PlacesVisited> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body:
+      ListView(
+        children: <Widget>[
+          Text("\n"),
+          Text("Places Visited", textAlign: TextAlign.center, textScaleFactor: 2),
+          Text("\n$qrdataC")
+        ],
+      )
+    );
+  }
+}
+

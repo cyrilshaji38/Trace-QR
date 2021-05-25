@@ -9,20 +9,33 @@ import 'package:flutter/foundation.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:trace/addusers.dart';
+import 'package:trace/database.dart';
 import 'main.dart';
 import 'c_dash.dart';
 import 'm_dash.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
-
-
+String imageUrl;
+final _storage = FirebaseStorage.instance;
 final _picker = ImagePicker();
 _picFromGallery() async {
+
   PickedFile image = await  _picker.getImage(
       source: ImageSource.gallery, imageQuality: 50
   );
   profile = File(image.path);
+  var snapshot = await _storage.ref()
+      .child('folderName/imageName/$uidC')
+      .putFile(profile);
+
+  var downloadUrl = await snapshot.ref.getDownloadURL();
+  // setState(() {
+    imageUrl = downloadUrl;
+  // });
+
 }
+
+
 void _showPicker(context) {
   showModalBottomSheet(
       context: context,
@@ -93,12 +106,11 @@ class _SignUpState extends State<SignUp> {
   //     this.pwdmismatch();
   // }
   void createacc(){
-    String uid = auth.currentUser.uid.toString();
-    // addUser(name, mobile, pincode, email, acctype, vaccine);
+    String uid = auth.currentUser.uid;
     addUser(name, email, mobile, pincode, acctype, vaccine, uid);
 
     if(acctype==1)
-      Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash(uid)));
     else if(acctype==2)
       Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantDash()));
   }
@@ -234,7 +246,7 @@ class _CreateQRState extends State<CreateQR> {
                 image: FileImage(profile),
                 typeNumber: 3,
                 size: 300,
-                data: "$mobile",
+                data: "$qrdataM",
                 errorCorrectLevel: QrErrorCorrectLevel.M,
                 roundEdges: true)
         )

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/foundation.dart';
 import 'signin.dart';
-// import 'main.dart';
 
 class MerchantDash extends StatefulWidget {
   const MerchantDash({Key key}) : super(key: key);
