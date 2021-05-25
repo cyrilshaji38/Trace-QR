@@ -5,19 +5,38 @@ import 'package:flutter/rendering.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:trace/signin.dart';
 import 'database.dart';
 import 'main.dart';
 
-class CustomerDash extends StatelessWidget {
-  final String documentId;
+class CustomerDash extends StatefulWidget {
 
+  final String documentId;
   CustomerDash(this.documentId);
+
+  @override
+  _CustomerDashState createState() => _CustomerDashState();
+}
+
+class _CustomerDashState extends State<CustomerDash> {
+
+  void clickQR() {
+    Navigator.push(context, MaterialPageRoute(builder: (context) => ScanQR()));
+  }
+
+  void places(){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => PlacesVisited()));
+  }
+
+  void logout(){
+    {Navigator.push(context, MaterialPageRoute(builder: (context) => Signin()));}
+  }
 
   @override
   Widget build(BuildContext context) {
 
     return FutureBuilder<DocumentSnapshot>(
-      future: users.doc(documentId).get(),
+      future: users.doc(widget.documentId).get(),
       builder:
           (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
 
@@ -31,10 +50,58 @@ class CustomerDash extends StatelessWidget {
 
         if (snapshot.connectionState == ConnectionState.done) {
           Map<String, dynamic> data = snapshot.data.data();
-          return Text("Name: ${data['Name']}");
+          return Scaffold(
+              appBar: AppBar(
+                  title: Text("Trace"),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: this.logout,
+                      child: Row(
+                          children: <Widget>[
+                            Text('Logout '),
+                            Icon(Icons.logout)
+                          ]
+                      ),
+                      style: TextButton.styleFrom(primary: Colors.white),
+                    )
+                  ]
+              ),
+              body:  Align(
+                  alignment: Alignment.topLeft,
+                  child:
+                  ListView(
+                      children: <Widget>[
+                        Text("${data['Name']}", textScaleFactor: 2, textAlign: TextAlign.center),
+                        GestureDetector(
+                            child: CircleAvatar(
+                                radius: 55, backgroundColor: Color(0xffFDCF09), child: profile != null ?
+                            (ClipRRect(borderRadius: BorderRadius.circular(50), child: Image.file(profile, width: 100, height: 100, fit: BoxFit.fitHeight,),))
+                                :
+                            (
+                                Container(decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(50)), width: 100, height: 100,
+                                  child: Icon(Icons.camera_alt, color: Colors.grey[800],),)
+                            )
+                            )
+                        ),
+                        Text("\nemail: ${data['Email']} \nMobile No: ${data['Mobile No']} \nPin Code: ${data['Pincode']} \nVaccine Doses Taken: ${data['Vaccines Taken']}", textScaleFactor: 1.5),
+                        Text("\nScan QR Code: ", textScaleFactor: 1.5),
+                        IconButton(icon: Icon(Icons.camera_alt_outlined ,size: 40), onPressed: this.clickQR,  alignment: Alignment.centerLeft),
+                        Text("\n\n"),
+                        MaterialButton(
+                          onPressed: () {  },
+                          child: ElevatedButton(onPressed: this.places, child: Text("Places Visited")),
+                        )
+                      ]
+                  )
+              )
+          );
         }
 
-        return Text("loading");
+        return Scaffold(
+            body: Center(child:
+            CircularProgressIndicator(),
+            )
+        );
       },
     );
   }
@@ -164,4 +231,3 @@ class _PlacesVisitedState extends State<PlacesVisited> {
     );
   }
 }
-

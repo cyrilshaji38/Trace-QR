@@ -1,7 +1,5 @@
 import 'dart:ui';
-// import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'dart:io';
@@ -98,13 +96,13 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
-
   // void pwdcheck(){
   //   if(password1==password)
   //     this.createacc();
   //   else
   //     this.pwdmismatch();
   // }
+
   void createacc(){
     String uid = auth.currentUser.uid;
     addUser(name, email, mobile, pincode, acctype, vaccine, uid);
@@ -112,8 +110,22 @@ class _SignUpState extends State<SignUp> {
     if(acctype==1)
       Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash(uid)));
     else if(acctype==2)
-      Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantDash()));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantDash(uid)));
+
   }
+
+  void valuecheck(){
+      Fluttertoast.showToast(
+          msg: "Select an Account Type!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }
+
   // void pwdmismatch(){
   //   Fluttertoast.showToast(
   //       msg: "Passwords do not match!",
@@ -222,7 +234,11 @@ class _SignUpState extends State<SignUp> {
                           fontSize: 30,
                         )
                     ),
-                    onPressed: (){auth.createUserWithEmailAndPassword(email: email, password: password).then((_){this.createacc();});}
+                    onPressed: (){
+                      if(acctype==0)
+                        valuecheck();
+                      else
+                        auth.createUserWithEmailAndPassword(email: email, password: password).then((_){this.createacc();});}
                 ),
                 Text("\n\n\n")
               ]

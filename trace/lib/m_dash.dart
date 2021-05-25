@@ -1,16 +1,22 @@
 import 'dart:ui';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/foundation.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:trace/signup.dart';
+import 'database.dart';
 import 'signin.dart';
+import 'package:trace/signin.dart';
+import 'main.dart';
 
 class MerchantDash extends StatefulWidget {
-  const MerchantDash({Key key}) : super(key: key);
+
+  final String documentId;
+  MerchantDash(this.documentId);
 
   @override
   _MerchantDashState createState() => _MerchantDashState();
 }
-
 
 class _MerchantDashState extends State<MerchantDash> {
 
@@ -18,178 +24,89 @@ class _MerchantDashState extends State<MerchantDash> {
     {Navigator.push(context, MaterialPageRoute(builder: (context) => Signin()));}
   }
 
+  void clickQR() {
+    if(profile != null) {
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CreateQR()));
+    }
+    else {
+      Fluttertoast.showToast(
+          msg: "Add profile picture first!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.red,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-            title: Text("Trace"),
-            actions: <Widget>[
-              TextButton(
-                onPressed: this.logout,
-                child: Row(
-                    children: <Widget>[
-                      Text('Logout '),
-                      Icon(Icons.logout)
-                    ]
-                ),
-                style: TextButton.styleFrom(primary: Colors.white),
-              )
-            ]
-        ),
-        body: SafeArea(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      //Icon(Icons.menu, color: Colors.white,size: 52.0,),
-                      // Image.asset("assets/image.png",width: 52.0,)
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(18.0),
-                  child: Text(
-                    "Welcome,  \nSelect an option",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 28.0,
-                        fontWeight: FontWeight.bold
-                    ),
-                    textAlign: TextAlign.start,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Center(
-                    child: Wrap(
-                      spacing:20,
-                      runSpacing: 20.0,
+
+    return FutureBuilder<DocumentSnapshot>(
+      future: users.doc(widget.documentId).get(),
+      builder:
+          (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+
+        if (snapshot.hasError) {
+          return Text("Something went wrong");
+        }
+
+        if (snapshot.hasData && !snapshot.data.exists) {
+          return Text("Document does not exist");
+        }
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          Map<String, dynamic> data = snapshot.data.data();
+          return Scaffold(
+              appBar: AppBar(
+                  title: Text("Trace"),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: this.logout,
+                      child: Row(
+                          children: <Widget>[
+                            Text('Logout '),
+                            Icon(Icons.logout)
+                          ]
+                      ),
+                      style: TextButton.styleFrom(primary: Colors.white),
+                    )
+                  ]
+              ),
+              body:  Align(
+                  alignment: Alignment.topLeft,
+                  child:
+                  ListView(
                       children: <Widget>[
-                        SizedBox(
-                          width:160.0,
-                          height: 160.0,
-                          child: Card(
-
-                            color: Colors.teal,
-                            elevation: 2.0,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0)
-                            ),
-                            child:Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: <Widget>[
-                                      // Image.asset("assets/.png",width: 64.0,),
-                                      SizedBox(
-                                        height: 10.0,
-                                      ),
-                                      Text(
-                                        "QR Code",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20.0
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 5.0,
-                                      ),
-
-                                    ],
-                                  ),
-                                )
-                            ),
-                          ),
+                        Text("${data['Name']}", textScaleFactor: 2, textAlign: TextAlign.center),
+                        GestureDetector(
+                            child: CircleAvatar(
+                                radius: 55, backgroundColor: Color(0xffFDCF09), child: profile != null ?
+                            (ClipRRect(borderRadius: BorderRadius.circular(50), child: Image.file(profile, width: 100, height: 100, fit: BoxFit.fitHeight,),))
+                                :
+                            (
+                                Container(decoration: BoxDecoration(color: Colors.grey[200], borderRadius: BorderRadius.circular(50)), width: 100, height: 100,
+                                  child: Icon(Icons.camera_alt, color: Colors.grey[800],),)
+                            )
+                            )
                         ),
-                        SizedBox(
-                          width:160.0,
-                          height: 160.0,
-                          child: Card(
+                        Text("\nemail: ${data['Email']} \nMobile No: ${data['Mobile No']} \nPin Code: ${data['Pincode']}", textScaleFactor: 1.5),
+                        Text("\nShow QR Code:", textScaleFactor: 1.5),
+                        IconButton(icon: Icon(Icons.qr_code, size: 30), onPressed: this.clickQR, alignment: Alignment.centerLeft),
+                      ]
+                  )
+              )
+          );
+        }
 
-                            color: Colors.teal,
-                            elevation: 2.0,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0)
-                            ),
-                            child:Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: <Widget>[
-                                      // Image.asset("assets/.png",width: 64.0,),
-                                      SizedBox(
-                                        height: 10.0,
-                                      ),
-                                      Text(
-                                        "Edit Details",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20.0
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 5.0,
-                                      ),
-
-                                    ],
-                                  ),
-                                )
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width:160.0,
-                          height: 160.0,
-                          child: Card(
-
-                            color: Colors.teal,
-                            elevation: 2.0,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8.0)
-                            ),
-                            child:Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: <Widget>[
-                                      // Image.asset("assets/.png",width: 64.0,),
-                                      SizedBox(
-                                        height: 10.0,
-                                      ),
-                                      Text(
-                                        "Log Summary",
-                                        style: TextStyle(
-                                            color: Colors.black,
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 20.0
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: 5.0,
-                                      ),
-
-                                    ],
-                                  ),
-                                )
-                            ),
-                          ),
-                        ),
-
-
-
-                      ],
-                    ),
-                  ),
-                )
-              ],
+        return Scaffold(
+            body: Center(child:
+            CircularProgressIndicator(),
             )
-        )
+        );
+      },
     );
   }
 }

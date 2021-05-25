@@ -6,8 +6,9 @@ import 'package:firebase_core/firebase_core.dart';
 
 final auth = FirebaseAuth.instance;
 
-String name, email, mobile, pincode, password, /*password1,*/ qrdataC, qrdataM = "Name: $name, Pincode: $pincode";
-int acctype=1, vaccine=0;  // acctype (1--> customer  2--> merchant)
+String name, email, mobile, pincode, password, /*password1,*/ qrdataC = "No Places Visited!", qrdataM = "Name: $name, Pincode: $pincode";
+int acctype=0, vaccine=0; // acctype (1--> customer  2--> merchant)
+// List<String> qrdataC1 = [];
 File profile;
 
 String nameC, emailC, mobileC, pincodeC, uidC;
@@ -33,13 +34,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-
-
-
-
-
