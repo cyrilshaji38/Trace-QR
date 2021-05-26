@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:Trace/screens/signin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -19,7 +20,7 @@ class MerchantDash extends StatefulWidget {
 class _MerchantDashState extends State<MerchantDash> {
 
   void logout(){
-    {Navigator.push(context, MaterialPageRoute(builder: (context) => MyApp()));}
+    {Navigator.push(context, MaterialPageRoute(builder: (context) => Signin()));}
   }
 
   void clickQR() {

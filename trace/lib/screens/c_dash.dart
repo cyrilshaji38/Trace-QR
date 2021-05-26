@@ -1,4 +1,5 @@
 import 'dart:ui';
+import 'package:Trace/screens/signin.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -30,7 +31,7 @@ class _CustomerDashState extends State<CustomerDash> {
   void logout() {
     {
       Navigator.push(
-          context, MaterialPageRoute(builder: (context) => MyApp()));
+          context, MaterialPageRoute(builder: (context) => Signin()));
     }
   }
 

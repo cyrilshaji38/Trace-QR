@@ -11,8 +11,7 @@ int acctype=0, vaccine=0; // acctype (1--> customer  2--> merchant)
 // List<String> qrdataC1 = [];
 File profile;
 
-String nameC, emailC, mobileC, pincodeC, uidC, imageUrlC;
-int acctypeC, vaccineC;
+String uidC, imageUrlC;
 
 
 void main() async{
