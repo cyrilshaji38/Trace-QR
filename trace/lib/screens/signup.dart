@@ -99,7 +99,6 @@ class _SignUpState extends State<SignUp> {
   void createacc(){
     String uid = auth.currentUser.uid;
     addUser(name, email, mobile, pincode, acctype, vaccine, uid, imageUrl);
-    print(imageUrl);
 
     if(acctype==1)
       Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash(uid)));
