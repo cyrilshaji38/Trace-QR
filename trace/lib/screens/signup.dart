@@ -13,7 +13,6 @@ import 'c_dash.dart';
 import 'm_dash.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-String imageUrl;
 final _storage = FirebaseStorage.instance;
 final _picker = ImagePicker();
 _picFromGallery() async {
@@ -22,15 +21,9 @@ _picFromGallery() async {
       source: ImageSource.gallery, imageQuality: 50
   );
   profile = File(image.path);
-  var snapshot = await _storage.ref()
-      .child('folderName/imageName/$uidC')
-      .putFile(profile);
-
+  var snapshot = await _storage.ref().child('Trace/Profile Picture/$email').putFile(profile);
   var downloadUrl = await snapshot.ref.getDownloadURL();
-  // setState(() {
     imageUrl = downloadUrl;
-  // });
-
 }
 
 
@@ -105,7 +98,8 @@ class _SignUpState extends State<SignUp> {
 
   void createacc(){
     String uid = auth.currentUser.uid;
-    addUser(name, email, mobile, pincode, acctype, vaccine, uid);
+    addUser(name, email, mobile, pincode, acctype, vaccine, uid, imageUrl);
+    print(imageUrl);
 
     if(acctype==1)
       Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash(uid)));
@@ -234,11 +228,41 @@ class _SignUpState extends State<SignUp> {
                           fontSize: 30,
                         )
                     ),
-                    onPressed: (){
+                    onPressed: () async{
                       if(acctype==0)
                         valuecheck();
                       else
-                        auth.createUserWithEmailAndPassword(email: email, password: password).then((_){this.createacc();});}
+                        try {
+                          await auth.createUserWithEmailAndPassword(email: email, password: password);
+                          this.createacc();
+                        } on FirebaseAuthException catch (e) {
+                          if (e.code == 'weak-password') {
+                            print('The password provided is too weak.');
+                            Fluttertoast.showToast(
+                                msg: "The password provided is too weak.",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0
+                            );
+                          } else if (e.code == 'email-already-in-use') {
+                            print('The account already exists for that email.');
+                            Fluttertoast.showToast(
+                                msg: "The account already exists for that email.",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.CENTER,
+                                timeInSecForIosWeb: 1,
+                                backgroundColor: Colors.red,
+                                textColor: Colors.white,
+                                fontSize: 16.0
+                            );
+                          }
+                        } catch (e) {
+                          print(e);
+                        }
+                    }
                 ),
                 Text("\n\n\n")
               ]
