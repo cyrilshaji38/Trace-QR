@@ -285,7 +285,7 @@ class _CreateQRState extends State<CreateQR> {
                 image: FileImage(profile),
                 typeNumber: 3,
                 size: 300,
-                data: "$qrdataM",
+                data: "$uidC",
                 errorCorrectLevel: QrErrorCorrectLevel.M,
                 roundEdges: true)
         )

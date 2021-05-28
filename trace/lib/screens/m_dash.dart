@@ -124,7 +124,7 @@ class _QRState extends State<QR> {
                 image: AssetImage("assets/images/Trace.png"),
                 typeNumber: 3,
                 size: 300,
-                data: "$qrdataM",
+                data: "$uidC",
                 errorCorrectLevel: QrErrorCorrectLevel.M,
                 roundEdges: true)
         )

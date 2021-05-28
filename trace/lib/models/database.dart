@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:Trace/main.dart';
 
 CollectionReference users = FirebaseFirestore.instance.collection('users');
+
   Future<void> addUser(name1, email1, mobile1, pincode1, acctype1, vaccine1, uid1, imageUrl1) async{
     return users.doc(uid1).set({
       'Name': name1,
@@ -14,4 +16,10 @@ CollectionReference users = FirebaseFirestore.instance.collection('users');
     })
         .then((value) => print("User Added"))
         .catchError((error) => print("Failed to add user: $error"));
+  }
+
+  Future<void> updateUser(qrdataC1) async{
+    return users.doc(uidC).update({
+      'QR Data': qrdataC1
+    });
   }

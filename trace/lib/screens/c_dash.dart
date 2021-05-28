@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import '../models/database.dart';
 import '../main.dart';
 
@@ -25,7 +24,7 @@ class _CustomerDashState extends State<CustomerDash> {
 
   void places() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => PlacesVisited()));
+        context, MaterialPageRoute(builder: (context) => PlacesVisited1(uidC)));
   }
 
   void logout() {
@@ -52,6 +51,7 @@ class _CustomerDashState extends State<CustomerDash> {
         if (snapshot.connectionState == ConnectionState.done) {
           Map<String, dynamic> data = snapshot.data.data();
           imageUrlC = "${data['Profile Picture']}";
+          qrdataC = data['QR Data'] ?? [];
           return new WillPopScope(
               onWillPop: () async => false,
               child: Scaffold(
@@ -168,7 +168,7 @@ class _ScanQRState extends State<ScanQR> {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => PlacesVisited()));
+                                  builder: (context) => PlacesVisited(qrdata)));
                           setState(() {});
                         },
                         child: FutureBuilder(
@@ -214,7 +214,8 @@ class _ScanQRState extends State<ScanQR> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
-        qrdataC = "${result.code}";
+        qrdata = "${result.code}";
+
       });
     });
   }
@@ -227,24 +228,93 @@ class _ScanQRState extends State<ScanQR> {
 }
 
 class PlacesVisited extends StatefulWidget {
-  const PlacesVisited({Key key}) : super(key: key);
+  final String documentId;
+
+  PlacesVisited(this.documentId);
 
   @override
   _PlacesVisitedState createState() => _PlacesVisitedState();
 }
 
 class _PlacesVisitedState extends State<PlacesVisited> {
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(title: Text("Trace")),
-        body: ListView(
-          children: <Widget>[
-            Text("\n"),
-            Text("Places Visited",
-                textAlign: TextAlign.center, textScaleFactor: 2),
-            Text("\n$qrdataC")
-          ],
-        ));
+    return FutureBuilder<DocumentSnapshot>(
+      future: users.doc(widget.documentId).get(),
+      builder: (BuildContext context,
+          AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text("Something went wrong");
+        }
+
+        if (snapshot.hasData && !snapshot.data.exists) {
+          return Text("Document does not exist");
+        }
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          Map<String, dynamic> data = snapshot.data.data();
+          qrdataC.add("\n\nShop: ${data['Name']}, \nPincode: ${data['Pincode']}, \nMobile No: ${data['Mobile No']}");
+          updateUser(qrdataC);
+          return Scaffold(
+              appBar: AppBar(title: Text("Trace")),
+              body: ListView(
+                children: <Widget>[
+                  Text("\n"),
+                  Text("Places Visited", textAlign: TextAlign.center, textScaleFactor: 3),
+                  Text("Shop: ${data['Name']}, \nPincode: ${data['Pincode']}, \nMobile No: ${data['Mobile No']}", textScaleFactor: 2)
+                ],
+              ));
+        }
+
+        return Scaffold(body: Center(child: CircularProgressIndicator(),));
+      },
+    );
+  }
+}
+
+
+class PlacesVisited1 extends StatefulWidget {
+  final String documentId;
+
+  PlacesVisited1(this.documentId);
+
+  @override
+  _PlacesVisited1State createState() => _PlacesVisited1State();
+}
+
+class _PlacesVisited1State extends State<PlacesVisited1> {
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<DocumentSnapshot>(
+      future: users.doc(widget.documentId).get(),
+      builder: (BuildContext context,
+          AsyncSnapshot<DocumentSnapshot> snapshot) {
+        if (snapshot.hasError) {
+          return Text("Something went wrong");
+        }
+
+        if (snapshot.hasData && !snapshot.data.exists) {
+          return Text("Document does not exist");
+        }
+
+        if (snapshot.connectionState == ConnectionState.done) {
+          Map<String, dynamic> data = snapshot.data.data();
+
+          return Scaffold(
+            appBar: AppBar(title: Text("Trace")),
+            body: ListView(
+                children: <Widget>[
+                  Text("Places Visited", textAlign: TextAlign.center, textScaleFactor: 3),
+                  Text("${data['QR Data']}",textScaleFactor: 2),
+              ]
+            )
+          );
+        }
+
+        return Scaffold(body: Center(child: CircularProgressIndicator(),));
+      },
+    );
   }
 }
