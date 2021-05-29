@@ -98,6 +98,8 @@ class _MerchantDashState extends State<MerchantDash> {
                             icon: Icon(Icons.qr_code, size: 30),
                             onPressed: this.clickQR,
                             alignment: Alignment.centerLeft),
+                        Text("\nCustomer List", textScaleFactor: 2, textAlign: TextAlign.center),
+                        Text("${data['Customer List']}".replaceAll('[', '').replaceAll("]", ""),textScaleFactor: 1.5),
                       ]))));
         }
 

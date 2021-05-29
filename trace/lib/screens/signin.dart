@@ -123,7 +123,7 @@ class _WelcomeState extends State<Welcome> {
 
   void clickProfile() {
     if(acctype2 == 1)
-      Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash(uidC)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash(uidC,uidM)));
     else if(acctype2 == 2)
       Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantDash(uidC)));
     else

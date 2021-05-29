@@ -101,7 +101,7 @@ class _SignUpState extends State<SignUp> {
     addUser(name, email, mobile, pincode, acctype, vaccine, uid, imageUrl);
 
     if(acctype==1)
-      Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash(uid)));
+      Navigator.push(context, MaterialPageRoute(builder: (context) => CustomerDash(uid,uidM)));
     else if(acctype==2)
       Navigator.push(context, MaterialPageRoute(builder: (context) => MerchantDash(uid)));
 

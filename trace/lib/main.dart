@@ -9,11 +9,11 @@ final auth = FirebaseAuth.instance;
 String name, email, mobile, pincode, password, /*password1,*/ imageUrl, qrdata;
 int acctype=0, vaccine=0, i; // acctype (1--> customer  2--> merchant)
 
-List<dynamic> qrdataC = [];
+List<dynamic> qrdataC = [], customerData = [];
 
 File profile;
 
-String uidC, imageUrlC, newQRdata;
+String uidC, imageUrlC, newQRdata, uidM;
 
 
 void main() async{

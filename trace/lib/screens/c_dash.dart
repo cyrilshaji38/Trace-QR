@@ -9,9 +9,9 @@ import '../models/database.dart';
 import '../main.dart';
 
 class CustomerDash extends StatefulWidget {
-  final String documentId;
+  final String documentId, documentId2;
 
-  CustomerDash(this.documentId);
+  CustomerDash(this.documentId, this.documentId2);
 
   @override
   _CustomerDashState createState() => _CustomerDashState();
@@ -52,6 +52,8 @@ class _CustomerDashState extends State<CustomerDash> {
           Map<String, dynamic> data = snapshot.data.data();
           imageUrlC = "${data['Profile Picture']}";
           qrdataC = data['QR Data'] ?? [];
+          customerData.clear();
+          customerData.add("\n\nCustomer: ${data['Name']}, \nPincode: ${data['Pincode']}, \nMobile No: ${data['Mobile No']}");
           return new WillPopScope(
               onWillPop: () async => false,
               child: Scaffold(
@@ -215,7 +217,7 @@ class _ScanQRState extends State<ScanQR> {
       setState(() {
         result = scanData;
         qrdata = "${result.code}";
-
+        uidM = "${result.code}";
       });
     });
   }
@@ -255,7 +257,11 @@ class _PlacesVisitedState extends State<PlacesVisited> {
         if (snapshot.connectionState == ConnectionState.done) {
           Map<String, dynamic> data = snapshot.data.data();
           qrdataC.add("\n\nShop: ${data['Name']}, \nPincode: ${data['Pincode']}, \nMobile No: ${data['Mobile No']}");
-          updateUser(qrdataC);
+          updateC(qrdataC);
+          String oldCustomerData = "${data['Customer List']}".replaceAll('[', '').replaceAll("]", "");
+          if(oldCustomerData!="null")
+            customerData.add(oldCustomerData);
+          updateM(customerData, uidM);
           return Scaffold(
               appBar: AppBar(title: Text("Trace")),
               body: ListView(
@@ -307,7 +313,7 @@ class _PlacesVisited1State extends State<PlacesVisited1> {
             body: ListView(
                 children: <Widget>[
                   Text("Places Visited", textAlign: TextAlign.center, textScaleFactor: 3),
-                  Text("${data['QR Data']}",textScaleFactor: 2),
+                  Text("${data['QR Data']}".replaceAll('[', '').replaceAll("]", ""),textScaleFactor: 2),
               ]
             )
           );
