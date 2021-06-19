@@ -43,27 +43,18 @@ class _SigninState extends State<Signin> {
                 children: <Widget>
                 [
                   Text("Login", textScaleFactor: 3),
-                  TextField(keyboardType: TextInputType.emailAddress,
-                      decoration: InputDecoration(labelText: "email"),
-                      onChanged: (value) {
-                        setState(() {
-                          _email = value.trim();
-                        });
-                      }),
-                  TextField(obscureText: true,
-                      decoration: InputDecoration(labelText: "password"),
-                      onChanged: (value) {
-                        setState(() {
-                          _password = value.trim();
-                        });
-                      }),
+                  TextField(keyboardType: TextInputType.emailAddress, decoration: InputDecoration(labelText: "email"), onChanged: (value) {setState(() {_email = value.trim();});}),
+                  TextField(obscureText: true, decoration: InputDecoration(labelText: "password"), onChanged: (value) {setState(() {_password = value.trim();});}),
                   IconButton(
-                      icon: Icon(Icons.arrow_forward, size: 50), onPressed: () async{
+                  icon: Icon(Icons.arrow_forward, size: 50),
+                  onPressed: () async {
                     try {
-                      await auth.signInWithEmailAndPassword(
-                          email: _email,
-                          password: _password
-                      ).then((_) {this.login();});
+                      await auth
+                          .signInWithEmailAndPassword(
+                              email: _email, password: _password)
+                          .then((_) {
+                        this.login();
+                      });
                     } on FirebaseAuthException catch (e) {
                       if (e.code == 'user-not-found') {
                         print('No user found for that email.');
@@ -74,8 +65,7 @@ class _SigninState extends State<Signin> {
                             timeInSecForIosWeb: 1,
                             backgroundColor: Colors.red,
                             textColor: Colors.white,
-                            fontSize: 16.0
-                        );
+                            fontSize: 16.0);
                       } else if (e.code == 'wrong-password') {
                         print('Wrong password provided for that user.');
                         Fluttertoast.showToast(
@@ -85,12 +75,9 @@ class _SigninState extends State<Signin> {
                             timeInSecForIosWeb: 1,
                             backgroundColor: Colors.red,
                             textColor: Colors.white,
-                            fontSize: 16.0
-                        );
+                            fontSize: 16.0);
                       }
                     }
-
-
                   }),
                   Text("\n"),
                   Row(
