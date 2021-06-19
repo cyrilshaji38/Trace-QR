@@ -37,6 +37,6 @@ firebase_storage: ^8.1.0
 Go to the Firebase Console. Click "Firestore Database" in the left-hand menu. Click the "Create Database" button. It will prompt you to set up, rules, choose test mode, for now.
 On the next screen select any of the locations you prefer. In the Firebase console, in the settings of your Android app, add your SHA-1 key by clicking "Add Fingerprint". Download google-services.json and place google-services.json into /android/app/.
 ## How to Run
-1. Download the apk: https://drive.google.com/file/d/1eTzkzzIH7Ov0ocPLptZSWcH_wC1VWWcf/view?usp=sharing
-2. Install it on an android phone.
+1. Download the apk: https://github.com/cyrilshaji38/Tinkerhub-Project/blob/main/Trace.apk
+2. Install it on an android phone or on this online android emulator: https://www.apkonline.net/runapk/create-androidapk.html?app=android_6.0_blank
 3. Enjoy
