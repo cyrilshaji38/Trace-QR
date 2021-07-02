@@ -1,5 +1,5 @@
 ![BFH Banner](https://trello-attachments.s3.amazonaws.com/542e9c6316504d5797afbfb9/542e9c6316504d5797afbfc1/39dee8d993841943b5723510ce663233/Frame_19.png)
-# Trace
+# Trace QR
 Welcome to Trace! This app helps you to avoid having to write your details into a registry at every store you go to during this pandemic. Just scan the merchant's QR Code and you will have a digital record of the shop you visited. If you are a merchant you will have a digital copy of all the customers that have scanned your QR Code.
 ## Team members
 1. Cyril Shaji [https://github.com/cyrilshaji38]
